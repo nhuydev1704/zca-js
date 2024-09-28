@@ -51,6 +51,7 @@ export class Zalo {
         const serverInfo = await getServerInfo(this.enableEncryptParam);
         if (!loginData || !serverInfo)
             throw new Error("Failed to login");
+        console.log("🚀 ~ Zalo ~ login ~ loginData:", loginData);
         appContext.secretKey = loginData.data.zpw_enk;
         appContext.uid = loginData.data.uid;
         // Zalo currently responds with setttings instead of settings
