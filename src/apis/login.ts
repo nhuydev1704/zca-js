@@ -10,13 +10,21 @@ export async function login(encryptParams: boolean) {
         "getlogininfo",
     );
 
+    console.log(
+        "url",
+        makeURL("https://wpa.chat.zalo.me/api/login/getLoginInfo", {
+            ...encryptedParams.params,
+            nretry: 0,
+        }),
+    );
+
     try {
         const response = await request(
-            makeURL("https://wpa.chat.zalo.me/api/login/getLoginInfo", {
-                ...encryptedParams.params,
-                nretry: 0,
-            }),
+            "https://wpa.chat.zalo.me/api/login/getLoginInfo?zcid=841B0C24BF01AFD93AA13A053E156402DEC156CE9160F8A23570E6144BD4F25827F28E77ADF9CD4DB06CBCAFC6B71DB1E9D6BD4D87113C3AFF696B2CD43C87290CBAF26B1E959FB5E943250468F3D84D95D511BA4EA282560ACB4E87127401D8&zcid_ext=e92e12d318&enc_ver=v2&params=RE5e5GIq%2BtIN1YwCesvVp4PXzOi0N1jl5mWExaV7pr61TiTqwstDFZxWAsmOrbpokj3hqNRZ6u5g9UCqdITBJIOpY17Yxoi17qUu6U6%2FAGZafK3FVBcvzuekrJrca4lS2FZQ0dbVYZ9K9ss%2BlDyW7GyNLLJj17mI%2BSdzwY0QSRhLWI3genbFM0IJQHh2NOTi&type=30&client_version=612&signkey=43d091dc98e57e32ec66419d187f6830&nretry=0",
         );
+
+        console.log("response", response);
+
         if (!response.ok) throw new Error("Failed to fetch login info: " + response.statusText);
         const data = await response.json();
 
