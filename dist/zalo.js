@@ -1,6 +1,6 @@
 import { getOwnId } from "./apis/getOwnId.js";
 import { Listener } from "./apis/listen.js";
-import { getServerInfo, login } from "./apis/login.js";
+import { getServerInfo } from "./apis/login.js";
 import { appContext } from "./context.js";
 import { logger, makeURL } from "./utils.js";
 import { addReactionFactory } from "./apis/addReaction.js";
@@ -45,10 +45,14 @@ export class Zalo {
             throw new Error("Missing required params");
         }
     }
-    async login() {
+    async login(account) {
         await checkUpdate();
-        const loginData = await login(this.enableEncryptParam);
+        // const loginData = await login(this.enableEncryptParam);
+        const loginData = {
+            data: account,
+        };
         const serverInfo = await getServerInfo(this.enableEncryptParam);
+        console.log("🚀 ~ Zalo ~ login ~ serverInfo:", serverInfo);
         if (!loginData || !serverInfo)
             throw new Error("Failed to login");
         console.log("🚀 ~ Zalo ~ login ~ loginData:", loginData);

@@ -48,7 +48,7 @@ export declare class Zalo {
     constructor(credentials: Credentials, options?: Partial<Options>);
     private parseCookies;
     private validateParams;
-    login(): Promise<API>;
+    login(account: any): Promise<API>;
 }
 export declare class API {
     private secretKey;
