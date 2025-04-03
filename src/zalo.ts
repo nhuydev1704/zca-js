@@ -153,6 +153,39 @@ export class Zalo {
         );
     }
 
+    public async onlyLoginQr(
+        options: { userAgent?: string; language?: string; qrPath?: string },
+        callback: LoginQRCallback,
+    ) {
+        if (!options) options = {};
+        if (!options.userAgent)
+            options.userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:133.0) Gecko/20100101 Firefox/133.0";
+        if (!options.language) options.language = "vi";
+
+        const ctx = createContext(this.options.apiType, this.options.apiVersion);
+        Object.assign(ctx.options, this.options);
+
+        const loginQRResult = await loginQR(
+            ctx,
+            options as { userAgent: string; language: string; qrPath?: string },
+            callback,
+        );
+        if (!loginQRResult) throw new ZaloApiError("Unable to login with QRCode");
+
+        const imei = generateZaloUUID(options.userAgent);
+
+        // Thanks to @YanCastle for this great suggestion!
+        return callback({
+            type: LoginQRCallbackEventType.GotLoginInfo,
+            data: {
+                cookie: loginQRResult.cookies,
+                imei,
+                userAgent: options.userAgent,
+            },
+            actions: null,
+        });
+    }
+
     public async loginQR(
         options?: { userAgent?: string; language?: string; qrPath?: string },
         callback?: LoginQRCallback,

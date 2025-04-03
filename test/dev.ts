@@ -12,7 +12,7 @@ let loginData: Credentials = {
 };
 
 const login = async () => {
-    const api = await zalo.loginQR({}, (res) => {
+    const api = await zalo.onlyLoginQr({}, (res) => {
         console.log("Login QR Callback", res);
         if (res.type === 4) {
             loginData = res.data;
