@@ -1,7 +1,14 @@
 import { Listener } from "./apis/listen.js";
 import { getServerInfo, login } from "./apis/login.js";
-import { createContext, isContextSession, type ContextBase, type ContextSession, type Options } from "./context.js";
-import { generateZaloUUID, logger, makeURL } from "./utils.js";
+import {
+    createContext,
+    isContextSession,
+    type ZPWServiceMap,
+    type ContextBase,
+    type ContextSession,
+    type Options,
+} from "./context.js";
+import { generateZaloUUID, logger } from "./utils.js";
 
 import toughCookie from "tough-cookie";
 import { acceptFriendRequestFactory } from "./apis/acceptFriendRequest.js";
@@ -35,8 +42,9 @@ import { getQRFactory } from "./apis/getQR.js";
 import { getStickersFactory } from "./apis/getStickers.js";
 import { getStickersDetailFactory } from "./apis/getStickersDetail.js";
 import { getUserInfoFactory } from "./apis/getUserInfo.js";
+import { keepAliveFactory } from "./apis/keepAlive.js";
 import { lockPollFactory } from "./apis/lockPoll.js";
-import { loginQR, type LoginQRCallback, LoginQRCallbackEventType } from "./apis/loginQR.js";
+import { loginQR, LoginQRCallbackEventType, type LoginQRCallback } from "./apis/loginQR.js";
 import { pinConversationsFactory } from "./apis/pinConversations.js";
 import { removeGroupDeputyFactory } from "./apis/removeGroupDeputy.js";
 import { removeUserFromGroupFactory } from "./apis/removeUserFromGroup.js";
@@ -144,13 +152,7 @@ export class Zalo {
 
         logger(ctx).info("Logged in as", loginData.data.uid);
 
-        return new API(
-            ctx,
-            loginData.data.zpw_service_map_v3,
-            makeURL(ctx, loginData.data.zpw_ws[0], {
-                t: Date.now(),
-            }),
-        );
+        return new API(ctx, loginData.data.zpw_service_map_v3, loginData.data.zpw_ws);
     }
 
     private async onlyLoginCookie(ctx: ContextBase, credentials: Credentials) {
@@ -269,7 +271,7 @@ export class Zalo {
 }
 
 export class API {
-    public zpwServiceMap: Record<string, string[]>;
+    public zpwServiceMap: ZPWServiceMap;
     public listener: Listener;
 
     public acceptFriendRequest: ReturnType<typeof acceptFriendRequestFactory>;
@@ -303,6 +305,7 @@ export class API {
     public getStickers: ReturnType<typeof getStickersFactory>;
     public getStickersDetail: ReturnType<typeof getStickersDetailFactory>;
     public getUserInfo: ReturnType<typeof getUserInfoFactory>;
+    public keepAlive: ReturnType<typeof keepAliveFactory>;
     public lockPoll: ReturnType<typeof lockPollFactory>;
     public pinConversations: ReturnType<typeof pinConversationsFactory>;
     public removeGroupDeputy: ReturnType<typeof removeGroupDeputyFactory>;
@@ -321,9 +324,9 @@ export class API {
     public undo: ReturnType<typeof undoFactory>;
     public uploadAttachment: ReturnType<typeof uploadAttachmentFactory>;
 
-    constructor(ctx: ContextSession, zpwServiceMap: Record<string, string[]>, wsUrl: string) {
+    constructor(ctx: ContextSession, zpwServiceMap: ZPWServiceMap, wsUrls: string[]) {
         this.zpwServiceMap = zpwServiceMap;
-        this.listener = new Listener(ctx, wsUrl);
+        this.listener = new Listener(ctx, wsUrls);
 
         this.acceptFriendRequest = acceptFriendRequestFactory(ctx, this);
         this.addGroupDeputy = addGroupDeputyFactory(ctx, this);
@@ -356,6 +359,7 @@ export class API {
         this.getStickers = getStickersFactory(ctx, this);
         this.getStickersDetail = getStickersDetailFactory(ctx, this);
         this.getUserInfo = getUserInfoFactory(ctx, this);
+        this.keepAlive = keepAliveFactory(ctx, this);
         this.lockPoll = lockPollFactory(ctx, this);
         this.pinConversations = pinConversationsFactory(ctx, this);
         this.removeGroupDeputy = removeGroupDeputyFactory(ctx, this);
