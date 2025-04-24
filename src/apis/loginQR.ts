@@ -66,6 +66,7 @@ export type LoginQRCallbackEvent =
               cookie: SerializedCookie[];
               imei: string;
               userAgent: string;
+              loginData?: any;
           };
           actions: null;
       };

@@ -153,6 +153,36 @@ export class Zalo {
         );
     }
 
+    private async onlyLoginCookie(ctx: ContextBase, credentials: Credentials) {
+        await checkUpdate(ctx);
+
+        this.validateParams(credentials);
+
+        ctx.imei = credentials.imei;
+        ctx.cookie = this.parseCookies(credentials.cookie);
+        ctx.userAgent = credentials.userAgent;
+        ctx.language = credentials.language || "vi";
+
+        const loginData = await login(ctx, this.enableEncryptParam);
+        const serverInfo = await getServerInfo(ctx, this.enableEncryptParam);
+
+        if (!loginData || !serverInfo) throw new Error("Đăng nhập thất bại");
+        ctx.secretKey = loginData.data.zpw_enk;
+        ctx.uid = loginData.data.uid;
+
+        // Zalo currently responds with setttings instead of settings
+        // they might fix this in the future, so we should have a fallback just in case
+        ctx.settings = serverInfo.setttings || serverInfo.settings;
+
+        ctx.extraVer = serverInfo.extra_ver;
+
+        if (!isContextSession(ctx)) throw new Error("Khởi tạo ngữ cảnh thát bại.");
+
+        logger(ctx).info("Logged in as", loginData.data.uid);
+
+        return loginData.data;
+    }
+
     public async onlyLoginQr(
         options: { userAgent?: string; language?: string; qrPath?: string },
         callback: LoginQRCallback,
@@ -174,6 +204,14 @@ export class Zalo {
 
         const imei = generateZaloUUID(options.userAgent);
 
+        // login account with cookie
+        const loginData = await this.onlyLoginCookie(ctx, {
+            cookie: loginQRResult.cookies,
+            imei,
+            userAgent: options.userAgent,
+            language: options.language,
+        });
+
         // Thanks to @YanCastle for this great suggestion!
         return callback({
             type: LoginQRCallbackEventType.GotLoginInfo,
@@ -181,6 +219,7 @@ export class Zalo {
                 cookie: loginQRResult.cookies,
                 imei,
                 userAgent: options.userAgent,
+                loginData,
             },
             actions: null,
         });
