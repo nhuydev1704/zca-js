@@ -3,10 +3,10 @@ import { getServerInfo, login } from "./apis/login.js";
 import {
     createContext,
     isContextSession,
-    type ZPWServiceMap,
     type ContextBase,
     type ContextSession,
     type Options,
+    type ZPWServiceMap,
 } from "./context.js";
 import { generateZaloUUID, logger } from "./utils.js";
 
@@ -36,6 +36,7 @@ import { getAllGroupsFactory } from "./apis/getAllGroups.js";
 import { getContextFactory } from "./apis/getContext.js";
 import { getCookieFactory } from "./apis/getCookie.js";
 import { getGroupInfoFactory } from "./apis/getGroupInfo.js";
+import { getGroupMembersInfoFactory } from "./apis/getGroupMembersInfo.js";
 import { getOwnIdFactory } from "./apis/getOwnId.js";
 import { getPollDetailFactory } from "./apis/getPollDetail.js";
 import { getQRFactory } from "./apis/getQR.js";
@@ -63,6 +64,10 @@ import { undoFactory } from "./apis/undo.js";
 import { uploadAttachmentFactory } from "./apis/uploadAttachment.js";
 import { ZaloApiError } from "./Errors/ZaloApiError.js";
 import { checkUpdate } from "./update.js";
+
+import { customFactory } from "./apis/custom.js";
+import { getLabelsFactory } from "./apis/getLabels.js";
+import { updateLabelsFactory } from "./apis/updateLabels.js";
 
 export type Cookie = {
     domain: string;
@@ -298,6 +303,8 @@ export class API {
     public getAllGroups: ReturnType<typeof getAllGroupsFactory>;
     public getCookie: ReturnType<typeof getCookieFactory>;
     public getGroupInfo: ReturnType<typeof getGroupInfoFactory>;
+    public getGroupMembersInfo: ReturnType<typeof getGroupMembersInfoFactory>;
+    public getLabels: ReturnType<typeof getLabelsFactory>;
     public getOwnId: ReturnType<typeof getOwnIdFactory>;
     public getPollDetail: ReturnType<typeof getPollDetailFactory>;
     public getContext: ReturnType<typeof getContextFactory>;
@@ -322,7 +329,10 @@ export class API {
     public sendVoice: ReturnType<typeof sendVoiceFactory>;
     public unblockUser: ReturnType<typeof unblockUserFactory>;
     public undo: ReturnType<typeof undoFactory>;
+    public updateLabels: ReturnType<typeof updateLabelsFactory>;
     public uploadAttachment: ReturnType<typeof uploadAttachmentFactory>;
+
+    public custom: ReturnType<typeof customFactory>;
 
     constructor(ctx: ContextSession, zpwServiceMap: ZPWServiceMap, wsUrls: string[]) {
         this.zpwServiceMap = zpwServiceMap;
@@ -352,6 +362,8 @@ export class API {
         this.getAllGroups = getAllGroupsFactory(ctx, this);
         this.getCookie = getCookieFactory(ctx, this);
         this.getGroupInfo = getGroupInfoFactory(ctx, this);
+        this.getGroupMembersInfo = getGroupMembersInfoFactory(ctx, this);
+        this.getLabels = getLabelsFactory(ctx, this);
         this.getOwnId = getOwnIdFactory(ctx, this);
         this.getPollDetail = getPollDetailFactory(ctx, this);
         this.getContext = getContextFactory(ctx, this);
@@ -376,6 +388,9 @@ export class API {
         this.sendVoice = sendVoiceFactory(ctx, this);
         this.unblockUser = unblockUserFactory(ctx, this);
         this.undo = undoFactory(ctx, this);
+        this.updateLabels = updateLabelsFactory(ctx, this);
         this.uploadAttachment = uploadAttachmentFactory(ctx, this);
+
+        this.custom = customFactory(ctx, this);
     }
 }
