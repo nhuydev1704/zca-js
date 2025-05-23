@@ -10,7 +10,6 @@ export type { AddUserToGroupResponse } from "./apis/addUserToGroup.js";
 export type { BlockUserResponse } from "./apis/blockUser.js";
 export type { BlockViewFeedResponse } from "./apis/blockViewFeed.js";
 export type { ChangeAccountAvatarResponse } from "./apis/changeAccountAvatar.js";
-export type { ChangeAccountSettingResponse } from "./apis/changeAccountSetting.js";
 export type { ChangeGroupAvatarResponse } from "./apis/changeGroupAvatar.js";
 export type { ChangeGroupNameResponse } from "./apis/changeGroupName.js";
 export type { ChangeGroupOwnerResponse } from "./apis/changeGroupOwner.js";
@@ -34,6 +33,7 @@ export type { PollOption, PollDetailResponse } from "./apis/getPollDetail.js";
 export type { ProfileInfo, UserInfoResponse } from "./apis/getUserInfo.js";
 export type { KeepAliveResponse } from "./apis/keepAlive.js";
 export type { LockPollResponse } from "./apis/lockPoll.js";
+export type { ParseLinkResponse, ParseLinkMedia, ParseLinkErrorMaps } from "./apis/parseLink.js";
 export type { PinConversationsResponse } from "./apis/pinConversations.js";
 export type { RemoveGroupDeputyResponse } from "./apis/removeGroupDeputy.js";
 export type { RemoveUserFromGroupResponse } from "./apis/removeUserFromGroup.js";
@@ -47,9 +47,11 @@ export type { SendSeenEventResponse, SeenEventMessageParams } from "./apis/sendS
 export type { SendTypingEventResponse, SendTypingEventOptions } from "./apis/sendTypingEvent.js";
 export type { SendVideoResponse, SendVideoOptions } from "./apis/sendVideo.js";
 export type { SendVoiceResponse, SendVoiceOptions } from "./apis/sendVoice.js";
+export type { SetSettingsAccountResponse, SetSettingType } from "./apis/setSettingsAccount.js";
 export type { UnBlockUserResponse } from "./apis/unblockUser.js";
 export type { UndoResponse, UndoOptions } from "./apis/undo.js";
 export type { UpdateLabelsResponse, UpdateLabelParams } from "./apis/updateLabels.js"
+export type { ChangeAccountSettingResponse } from "./apis/updateProfile.js";
 export type { FileData, ImageData, UploadAttachmentResponse, UploadAttachmentType } from "./apis/uploadAttachment.js";
 export type { LoginQRCallback, LoginQRCallbackEvent } from "./apis/loginQR.js";
 
