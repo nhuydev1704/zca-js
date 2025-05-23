@@ -509,12 +509,12 @@ export class Listener extends EventEmitter<ListenerEvents> {
      *
      * @param lastMsgId
      */
-    public requestOldMessages(threadType: ThreadType, lastMsgId: string | null = null) {
+    public requestOldMessages(threadType: ThreadType, lastMsgId: string | null = null, preIds?: string[]) {
         const payload = {
             version: 1,
             cmd: threadType === ThreadType.User ? 510 : 511,
             subCmd: 1,
-            data: { first: true, lastId: lastMsgId, preIds: [] },
+            data: { first: true, lastId: lastMsgId, preIds: preIds || [] },
         };
         this.sendWs(payload);
     }
@@ -524,12 +524,12 @@ export class Listener extends EventEmitter<ListenerEvents> {
      *
      * @param lastMsgId
      */
-    public requestOldReactions(threadType: ThreadType, lastMsgId: string | null = null) {
+    public requestOldReactions(threadType: ThreadType, lastMsgId: string | null = null, preIds?: string[]) {
         const payload = {
             version: 1,
             cmd: threadType === ThreadType.User ? 610 : 611,
             subCmd: 1,
-            data: { first: true, lastId: lastMsgId, preIds: [] },
+            data: { first: true, lastId: lastMsgId, preIds: preIds || [] },
         };
         this.sendWs(payload);
     }

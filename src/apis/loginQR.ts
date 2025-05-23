@@ -67,6 +67,7 @@ export type LoginQRCallbackEvent =
               imei: string;
               userAgent: string;
               loginData?: any;
+              userInfo?: any;
           };
           actions: null;
       };

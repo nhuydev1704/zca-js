@@ -70,6 +70,16 @@ import { ZaloApiError } from "./Errors/ZaloApiError.js";
 import { checkUpdate } from "./update.js";
 
 import { customFactory } from "./apis/custom.js";
+import { getPhoneBookFactory } from "./apis/getPhoneBook.js";
+import { getLastMsgFactory } from "./apis/getLastMsg.js";
+import { getPersonalTodoVerifyFactory } from "./apis/getPersonalTodoVerify.js";
+import { createPersonalTodoFactory } from "./apis/createPersonalTodo.js";
+import { updatePersonalTodoFactory } from "./apis/updatePersonalTodo.js";
+import { deletePersonalTodoFactory } from "./apis/deletePersonalTodo.js";
+import { getPersonalTodoDetailFactory } from "./apis/getPersonalTodoDetail.js";
+import { getPersonalTodoDingFactory } from "./apis/getPersonalTodoDing.js";
+import { updateStatusPersonalTodoFactory } from "./apis/updateStatusPersonalTodo.js";
+import { getAvatarFactory } from "./apis/getAvatar.js";
 
 export type Cookie = {
     domain: string;
@@ -229,6 +239,7 @@ export class Zalo {
                 imei,
                 userAgent: options.userAgent,
                 loginData,
+                userInfo: loginQRResult.userInfo,
             },
             actions: null,
         });
@@ -301,6 +312,7 @@ export class API {
     public fetchAccountInfo: ReturnType<typeof fetchAccountInfoFactory>;
     public findUser: ReturnType<typeof findUserFactory>;
     public getAllFriends: ReturnType<typeof getAllFriendsFactory>;
+    public getPhoneBooks: ReturnType<typeof getPhoneBookFactory>;
     public getAllGroups: ReturnType<typeof getAllGroupsFactory>;
     public getCookie: ReturnType<typeof getCookieFactory>;
     public getGroupInfo: ReturnType<typeof getGroupInfoFactory>;
@@ -335,6 +347,15 @@ export class API {
     public updateLabels: ReturnType<typeof updateLabelsFactory>;
     public updateProfile: ReturnType<typeof updateProfileFactory>;
     public uploadAttachment: ReturnType<typeof uploadAttachmentFactory>;
+    public getLastMsg: ReturnType<typeof getLastMsgFactory>;
+    public getPersonalTodoVerify: ReturnType<typeof getPersonalTodoVerifyFactory>;
+    public createPersonalTodo: ReturnType<typeof createPersonalTodoFactory>;
+    public updatePersonalTodo: ReturnType<typeof updatePersonalTodoFactory>;
+    public updateStatusPersonalTodo: ReturnType<typeof updateStatusPersonalTodoFactory>;
+    public getPersonalTodoDing: ReturnType<typeof getPersonalTodoDingFactory>;
+    public deletePersonalTodo: ReturnType<typeof deletePersonalTodoFactory>;
+    public getPersonalTodoDetail: ReturnType<typeof getPersonalTodoDetailFactory>;
+    public getAvatar: ReturnType<typeof getAvatarFactory>;
 
     public custom: ReturnType<typeof customFactory>;
 
@@ -362,6 +383,7 @@ export class API {
         this.fetchAccountInfo = fetchAccountInfoFactory(ctx, this);
         this.findUser = findUserFactory(ctx, this);
         this.getAllFriends = getAllFriendsFactory(ctx, this);
+        this.getPhoneBooks = getPhoneBookFactory(ctx, this);
         this.getAllGroups = getAllGroupsFactory(ctx, this);
         this.getCookie = getCookieFactory(ctx, this);
         this.getGroupInfo = getGroupInfoFactory(ctx, this);
@@ -396,6 +418,17 @@ export class API {
         this.updateLabels = updateLabelsFactory(ctx, this);
         this.updateProfile = updateProfileFactory(ctx, this);
         this.uploadAttachment = uploadAttachmentFactory(ctx, this);
+        this.getLastMsg = getLastMsgFactory(ctx, this);
+        this.getAvatar = getAvatarFactory(ctx, this);
+
+        // todo
+        this.getPersonalTodoVerify = getPersonalTodoVerifyFactory(ctx, this);
+        this.createPersonalTodo = createPersonalTodoFactory(ctx, this);
+        this.updatePersonalTodo = updatePersonalTodoFactory(ctx, this);
+        this.getPersonalTodoDing = getPersonalTodoDingFactory(ctx, this);
+        this.updateStatusPersonalTodo = updateStatusPersonalTodoFactory(ctx, this);
+        this.deletePersonalTodo = deletePersonalTodoFactory(ctx, this);
+        this.getPersonalTodoDetail = getPersonalTodoDetailFactory(ctx, this);
 
         this.custom = customFactory(ctx, this);
     }
