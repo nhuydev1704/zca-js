@@ -1,26 +1,27 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type RemoveGroupDeputyResponse = "";
+export type ThreadInfo = {
+    is_group: number;
+    thread_id: string;
+};
 
-export const removeGroupDeputyFactory = apiFactory<RemoveGroupDeputyResponse>()((api, ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/admins/remove`);
+export type GetHiddenConversPinResponse = {
+    pin: string;
+    threads: ThreadInfo[];
+};
+
+export const getHiddenConversPinFactory = apiFactory<GetHiddenConversPinResponse>()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.conversation[0]}/api/hiddenconvers/get-all`);
 
     /**
-     * Remove group deputy
-     *
-     * @param memberId user Id or list of user Ids
-     * @param groupId group Id
+     * Get hidden convers pin
      *
      * @throws ZaloApiError
      *
      */
-    return async function removeGroupDeputy(memberId: string | string[], groupId: string) {
-        if (!Array.isArray(memberId)) memberId = [memberId];
-
+    return async function getHiddenConversPin() {
         const params = {
-            grid: groupId,
-            members: memberId,
             imei: ctx.imei,
         };
 

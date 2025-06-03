@@ -1,23 +1,29 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type ChangeFriendAliasResponse = "";
+export type GetAliasListResponse = {
+    items: {
+        userId: string;
+        alias: string;
+    }[];
+    updateTime: string;
+};
 
-export const changeFriendAliasFactory = apiFactory<ChangeFriendAliasResponse>()((api, ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.alias[0]}/api/alias/update`);
+export const getAliasListFactory = apiFactory<GetAliasListResponse>()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.alias[0]}/api/alias/list`);
 
     /**
-     * Change friend's alias
-     *
-     * @param alias new alias (nickname - bietdanh)
-     * @param friendId friend id
+     * Get alias list
+     * 
+     * @param count Page size (default: 100)
+     * @param page Page number (default: 1)
      *
      * @throws ZaloApiError
      */
-    return async function changeFriendAlias(alias: string, friendId: string) {
+    return async function getAliasList(count: number = 100, page: number = 1) {
         const params = {
-            friendId: friendId,
-            alias: alias,
+            page,
+            count,
             imei: ctx.imei,
         };
 

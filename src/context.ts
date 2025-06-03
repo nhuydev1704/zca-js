@@ -71,6 +71,7 @@ type LoginInfo = {
         boards: string[];
         downloadStickerUrl: string[];
         sp_contact: string[];
+        zcloud_up_file: string[];
         media_store_send2me: string[];
         push_act: string[];
         aext: string[];
@@ -188,7 +189,7 @@ export type AppContextExtended = {
 
 export type ContextBase = Partial<AppContextBase> & AppContextExtended;
 
-export const createContext = (apiType = 30, apiVersion = 657) =>
+export const createContext = (apiType = 30, apiVersion = 658) =>
     ({
         API_TYPE: apiType,
         API_VERSION: apiVersion,

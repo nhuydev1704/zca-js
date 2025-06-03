@@ -1,23 +1,30 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type ChangeFriendAliasResponse = "";
+export type MuteEntriesInfo = {
+    id: string;
+    duration: number;
+    startTime: number;
+    systemTime: number;
+    currentTime: number;
+    muteMode: number;
+};
 
-export const changeFriendAliasFactory = apiFactory<ChangeFriendAliasResponse>()((api, ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.alias[0]}/api/alias/update`);
+export type GetMuteResponse = {
+    chatEntries: MuteEntriesInfo[];
+    groupChatEntries: MuteEntriesInfo[];
+};
+
+export const getMuteFactory = apiFactory<GetMuteResponse>()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.profile[0]}/api/social/profile/getmute`);
 
     /**
-     * Change friend's alias
-     *
-     * @param alias new alias (nickname - bietdanh)
-     * @param friendId friend id
+     * Get mute
      *
      * @throws ZaloApiError
      */
-    return async function changeFriendAlias(alias: string, friendId: string) {
+    return async function getMute() {
         const params = {
-            friendId: friendId,
-            alias: alias,
             imei: ctx.imei,
         };
 

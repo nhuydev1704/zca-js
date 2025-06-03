@@ -1,26 +1,25 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type RemoveGroupDeputyResponse = "";
+export type EnableGroupLinkResponse = {
+    link: string;
+    expiration_date: number;
+    enabled: number;
+};
 
-export const removeGroupDeputyFactory = apiFactory<RemoveGroupDeputyResponse>()((api, ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/admins/remove`);
+export const enableGroupLinkFactory = apiFactory<EnableGroupLinkResponse>()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/link/new`);
 
     /**
-     * Remove group deputy
+     * Enable group link
      *
-     * @param memberId user Id or list of user Ids
-     * @param groupId group Id
+     * @param groupId The group id
      *
      * @throws ZaloApiError
-     *
      */
-    return async function removeGroupDeputy(memberId: string | string[], groupId: string) {
-        if (!Array.isArray(memberId)) memberId = [memberId];
-
+    return async function enableGroupLink(groupId: string) {
         const params = {
             grid: groupId,
-            members: memberId,
             imei: ctx.imei,
         };
 
