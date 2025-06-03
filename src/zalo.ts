@@ -80,6 +80,23 @@ import { getPersonalTodoDetailFactory } from "./apis/getPersonalTodoDetail.js";
 import { getPersonalTodoDingFactory } from "./apis/getPersonalTodoDing.js";
 import { updateStatusPersonalTodoFactory } from "./apis/updateStatusPersonalTodo.js";
 import { getAvatarFactory } from "./apis/getAvatar.js";
+import { getPersonalBoardPinListFactory } from "./apis/getPersonalBoardPinList.js";
+import { getGroupBoardPinListFactory } from "./apis/getGroupBoardPinList.js";
+import { getGroupBoardListFactory } from "./apis/groups/getGroupBoardList.js";
+import { getListReminderFactory } from "./apis/groups/getListReminder.js";
+import { getLinkGroupFactory } from "./apis/groups/getLinkGroup.js";
+import { getPersonalizedStickersFactory } from "./apis/stickers/getPersonalizedStickers.js";
+import { getCategoryStickersFactory } from "./apis/stickers/getCategoryStickers.js";
+import { getCategoryStickersDetailFactory } from "./apis/stickers/getCategoryStickersDetail.js";
+import { getStickersSuggestionFactory } from "./apis/stickers/getStickersSuggestion.js";
+import { getCategoryStickersRecommendedFactory } from "./apis/stickers/getCategoryStickersRecommended.js";
+import { getSearchStickersFactory } from "./apis/stickers/getSearchStickers.js";
+import { getCategoryStickersDetailStickFactory } from "./apis/stickers/getCategoryStickersDetailStick.js";
+import { getProfileExtraFactory } from "./apis/personal/getProfileExtra.js";
+import { getLastOnlineFactory } from "./apis/personal/getLastOnline.js";
+import { getFriendReqStatusFactory } from "./apis/personal/getFriendReqStatus.js";
+import { undoFriendRequestFactory } from "./apis/personal/undoFriendReq.js";
+import { rejectFriendRequestFactory } from "./apis/personal/rejectFriendReq.js";
 
 export type Cookie = {
     domain: string;
@@ -356,6 +373,25 @@ export class API {
     public deletePersonalTodo: ReturnType<typeof deletePersonalTodoFactory>;
     public getPersonalTodoDetail: ReturnType<typeof getPersonalTodoDetailFactory>;
     public getAvatar: ReturnType<typeof getAvatarFactory>;
+    // add new 25/05/2025
+    public getPersonalBoardPinList: ReturnType<typeof getPersonalBoardPinListFactory>;
+    public getGroupBoardPinList: ReturnType<typeof getGroupBoardPinListFactory>;
+    public getGroupBoardList: ReturnType<typeof getGroupBoardListFactory>;
+    public getListReminder: ReturnType<typeof getListReminderFactory>;
+    public getLinkGroup: ReturnType<typeof getLinkGroupFactory>;
+    public getPersonalizedStickers: ReturnType<typeof getPersonalizedStickersFactory>;
+    public getCategoryStickers: ReturnType<typeof getCategoryStickersFactory>;
+    public getCategoryStickersDetail: ReturnType<typeof getCategoryStickersDetailFactory>;
+    public getStickersSuggestion: ReturnType<typeof getStickersSuggestionFactory>;
+    public getCategoryStickersRecommended: ReturnType<typeof getCategoryStickersRecommendedFactory>;
+    public getSearchStickers: ReturnType<typeof getSearchStickersFactory>;
+    public getCategoryStickersDetailStick: ReturnType<typeof getCategoryStickersDetailStickFactory>;
+    // add 03/06/2025
+    public getProfileExtra: ReturnType<typeof getProfileExtraFactory>;
+    public getLastOnline: ReturnType<typeof getLastOnlineFactory>;
+    public getFriendReqStatus: ReturnType<typeof getFriendReqStatusFactory>;
+    public undoFriendRequest: ReturnType<typeof undoFriendRequestFactory>;
+    public rejectFriendRequest: ReturnType<typeof rejectFriendRequestFactory>;
 
     public custom: ReturnType<typeof customFactory>;
 
@@ -429,6 +465,26 @@ export class API {
         this.updateStatusPersonalTodo = updateStatusPersonalTodoFactory(ctx, this);
         this.deletePersonalTodo = deletePersonalTodoFactory(ctx, this);
         this.getPersonalTodoDetail = getPersonalTodoDetailFactory(ctx, this);
+
+        // add new 25/05/2025
+        this.getPersonalBoardPinList = getPersonalBoardPinListFactory(ctx, this);
+        this.getGroupBoardPinList = getGroupBoardPinListFactory(ctx, this);
+        this.getGroupBoardList = getGroupBoardListFactory(ctx, this);
+        this.getListReminder = getListReminderFactory(ctx, this);
+        this.getLinkGroup = getLinkGroupFactory(ctx, this);
+        this.getPersonalizedStickers = getPersonalizedStickersFactory(ctx, this);
+        this.getCategoryStickers = getCategoryStickersFactory(ctx, this);
+        this.getCategoryStickersDetail = getCategoryStickersDetailFactory(ctx, this);
+        this.getStickersSuggestion = getStickersSuggestionFactory(ctx, this);
+        this.getCategoryStickersRecommended = getCategoryStickersRecommendedFactory(ctx, this);
+        this.getSearchStickers = getSearchStickersFactory(ctx, this);
+        this.getCategoryStickersDetailStick = getCategoryStickersDetailStickFactory(ctx, this);
+        // add 03/06/2025
+        this.getProfileExtra = getProfileExtraFactory(ctx, this);
+        this.getLastOnline = getLastOnlineFactory(ctx, this);
+        this.getFriendReqStatus = getFriendReqStatusFactory(ctx, this);
+        this.undoFriendRequest = undoFriendRequestFactory(ctx, this);
+        this.rejectFriendRequest = rejectFriendRequestFactory(ctx, this);
 
         this.custom = customFactory(ctx, this);
     }

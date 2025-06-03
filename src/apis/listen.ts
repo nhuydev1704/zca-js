@@ -342,13 +342,16 @@ export class Listener extends EventEmitter<ListenerEvents> {
 
                             // Handles the case when act is "pin_create" and params is a string
                             if (
-                                typeof friendEventData == "object" &&
+                                typeof friendEventData === "object" &&
+                                friendEventData !== null &&
                                 "topic" in friendEventData &&
-                                typeof friendEventData.topic == "object" &&
+                                typeof friendEventData.topic === "object" &&
+                                friendEventData.topic !== null &&
                                 "params" in friendEventData.topic
                             ) {
                                 friendEventData.topic.params = JSON.parse(`${friendEventData.topic.params}`);
                             }
+                            console.log("friendEventData", friendEventData);
 
                             const friendEvent = initializeFriendEvent(
                                 this.ctx.uid,
