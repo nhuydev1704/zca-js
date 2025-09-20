@@ -1,19 +1,16 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
+import type { LabelData } from "../models/index.js";
+
 export type GetLabelsResponse = {
-    labelData: {
-        id: number;
-        text: string;
-        textKey: string;
-        conversations: string[];
-        color: string;
-        offset: number;
-        emoji: string;
-        createTime: number;
-    }[];
+    labelData: LabelData[];
     version: number;
     lastUpdateTime: number;
+};
+
+type RawResponseType = Omit<GetLabelsResponse, "labelData"> & {
+    labelData: string;
 };
 
 export const getLabelsFactory = apiFactory<GetLabelsResponse>()((api, ctx, utils) => {
@@ -22,7 +19,7 @@ export const getLabelsFactory = apiFactory<GetLabelsResponse>()((api, ctx, utils
     /**
      * Get all labels
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function getLabels() {
         const params = {
@@ -34,14 +31,14 @@ export const getLabelsFactory = apiFactory<GetLabelsResponse>()((api, ctx, utils
 
         const response = await utils.request(utils.makeURL(serviceURL, { params: encryptedParams }));
 
-        const unFormatted = (await utils.resolve(response)) as unknown as Omit<GetLabelsResponse, "labelData"> & {
-            labelData: string;
-        };
-
-        return {
-            labelData: JSON.parse(unFormatted.labelData),
-            version: unFormatted.version,
-            lastUpdateTime: unFormatted.lastUpdateTime,
-        };
+        return utils.resolve(response, (result) => {
+            const data = result.data as RawResponseType;
+            const formattedData: GetLabelsResponse = {
+                labelData: JSON.parse(data.labelData),
+                version: data.version,
+                lastUpdateTime: data.lastUpdateTime,
+            };
+            return formattedData;
+        });
     };
 });

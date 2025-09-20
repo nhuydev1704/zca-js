@@ -1,28 +1,22 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type ThreadInfo = {
-    is_group: number;
-    thread_id: string;
-};
+export type JoinGroupInviteBoxResponse = "";
 
-export type GetHiddenConversPinResponse = {
-    pin: string;
-    threads: ThreadInfo[];
-};
-
-export const getHiddenConversPinFactory = apiFactory<GetHiddenConversPinResponse>()((api, ctx, utils) => {
-    const serviceURL = utils.makeURL(`${api.zpwServiceMap.conversation[0]}/api/hiddenconvers/get-all`);
+export const joinGroupInviteBoxFactory = apiFactory<JoinGroupInviteBoxResponse>()((api, ctx, utils) => {
+    const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/inv-box/join`);
 
     /**
-     * Get hidden convers pin
+     * Join group invite box
      *
-     * @throws ZaloApiError
+     * @param groupId - The group id
      *
+     * @throws {ZaloApiError}
      */
-    return async function getHiddenConversPin() {
+    return async function joinGroupInviteBox(groupId: string) {
         const params = {
-            imei: ctx.imei,
+            grid: groupId,
+            lang: ctx.language,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));

@@ -1,17 +1,16 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import type { Gender, ZBusinessPackage } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type FindUserResponse = {
     avatar: string;
     cover: string;
     status: string;
-    gender: number;
+    gender: Gender;
     dob: number;
     sdob: string;
     globalId: string;
-    bizPkg: {
-        pkgId: number;
-    };
+    bizPkg: ZBusinessPackage;
     uid: string;
     zalo_name: string;
     display_name: string;
@@ -25,7 +24,7 @@ export const findUserFactory = apiFactory<FindUserResponse>()((api, ctx, utils) 
      *
      * @param phoneNumber Phone number
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function findUser(phoneNumber: string) {
         if (!phoneNumber) throw new ZaloApiError("Missing phoneNumber");

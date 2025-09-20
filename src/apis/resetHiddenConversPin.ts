@@ -1,5 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { apiFactory, encryptPin } from "../utils.js";
+import { apiFactory } from "../utils.js";
 
 export type ResetHiddenConversPinResponse = "";
 
@@ -9,7 +9,7 @@ export const resetHiddenConversPinFactory = apiFactory<ResetHiddenConversPinResp
     /**
      * Reset hidden conversation pin
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function resetHiddenConversPin() {
         const params = {};

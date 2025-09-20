@@ -1,52 +1,21 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import type { GroupSetting } from "../models/GroupEvent.js";
+import type { GroupInfo } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type GroupInfoResponse = {
     removedsGroup: string[];
     unchangedsGroup: string[];
-    gridInfoMap: GridInfoMap;
+    gridInfoMap: {
+        [groupId: string]: GroupInfo & {
+            memVerList: string[];
+            pendingApprove: GroupInfoPendingApprove;
+        };
+    };
 };
 
-export type GridInfoMap = {
-    [groupId: string]: GroupInfo;
-};
-
-export type GroupInfo = {
-    groupId: string;
-    name: string;
-    desc: string;
-    type: number;
-    creatorId: string;
-    version: string;
-    avt: string;
-    fullAvt: string;
-    memberIds: any[];
-    adminIds: string[];
-    currentMems: any[];
-    updateMems: any[];
-    memVerList: string[];
-    admins: any[];
-    hasMoreMember: number;
-    subType: number;
-    totalMember: number;
-    maxMember: number;
-    setting: GroupSetting;
-    createdTime: number;
-    visibility: number;
-    globalId: string;
-    e2ee: number;
-    pendingApprove: PendingApprove;
-    extraInfo: ExtraInfo;
-};
-
-export type PendingApprove = {
+export type GroupInfoPendingApprove = {
     time: number;
-    uids: null | string[];
-};
-
-export type ExtraInfo = {
-    enable_media_store: number;
+    uids: string[] | null;
 };
 
 export const getGroupInfoFactory = apiFactory<GroupInfoResponse>()((api, _, utils) => {
@@ -57,22 +26,19 @@ export const getGroupInfoFactory = apiFactory<GroupInfoResponse>()((api, _, util
      *
      * @param groupId Group ID or list of group IDs
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function getGroupInfo(groupId?: string | string[]) {
         if (!Array.isArray(groupId) && groupId) groupId = [groupId];
 
-        let params: any = {};
-
-        if (groupId) {
-            params.gridVerMap = {};
-
-            for (const id of groupId) {
-                params.gridVerMap[id] = 0;
-            }
-
-            params.gridVerMap = JSON.stringify(params.gridVerMap);
-        }
+        const params = {
+            gridVerMap: JSON.stringify(
+                groupId.reduce<Record<string, number>>((acc, id) => {
+                    acc[id] = 0;
+                    return acc;
+                }, {}),
+            ),
+        };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt message");

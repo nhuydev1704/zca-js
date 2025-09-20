@@ -1,23 +1,15 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import type { QuickMessage, AttachmentSource } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
-export type Message = {
-    title: string;
-    params: string | null;
-};
-
-export type QuickMessage = {
-    id: number;
+export type AddQuickMessagePayload = {
     keyword: string;
-    type: number;
-    createdTime: number;
-    lastModified: number;
-    message: Message;
-    media: null;
+    title: string;
+    media?: AttachmentSource;
 };
 
 export type AddQuickMessageResponse = {
-    items: QuickMessage[];
+    item: QuickMessage;
     version: number;
 };
 
@@ -27,23 +19,53 @@ export const addQuickMessageFactory = apiFactory<AddQuickMessageResponse>()((api
     /**
      * Add quick message
      *
-     * @param keyword - The keyword of the quick message
-     * @param title - The title of the quick message
+     * @param addPayload - The payload containing data to add the quick message
      *
-     * @notes còn bản có thể up ảnh mà nhiều case quá huhu (dùng tạm bản không có nhé)
+     * @note Zalo might throw an error with code 821 if you have reached the limit of quick messages.
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
-    return async function addQuickMessage(keyword: string, title: string) {
-        const params = {
-            keyword: keyword,
+    return async function addQuickMessage(addPayload: AddQuickMessagePayload) {
+        const isType = !addPayload.media ? 0 : 1;
+
+        const params: Record<string, unknown> = {
+            keyword: addPayload.keyword,
             message: {
-                title: title,
+                title: addPayload.title,
                 params: "",
             },
-            type: 0,
+            type: isType,
             imei: ctx.imei,
         };
+
+        if (isType === 1) {
+            if (!addPayload.media) throw new ZaloApiError("Media is required");
+            const uploadMedia = await api.uploadProductPhoto({
+                file: addPayload.media,
+            });
+
+            const photoId = uploadMedia.photoId;
+            const thumbUrl = uploadMedia.thumbUrl;
+            const normalUrl = uploadMedia.normalUrl;
+            const hdUrl = uploadMedia.hdUrl;
+
+            params.media = {
+                items: [
+                    {
+                        type: 0,
+                        photoId: photoId,
+                        title: "",
+                        width: "",
+                        height: "",
+                        previewThumb: thumbUrl,
+                        rawUrl: normalUrl || hdUrl,
+                        thumbUrl: thumbUrl,
+                        normalUrl: normalUrl || hdUrl,
+                        hdUrl: hdUrl || normalUrl,
+                    },
+                ],
+            };
+        }
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");

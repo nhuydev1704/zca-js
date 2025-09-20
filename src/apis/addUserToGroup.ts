@@ -2,8 +2,8 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
 export type AddUserToGroupResponse = {
-    errorMemebers: string[];
-    error_data: Record<string, any>;
+    errorMembers: string[];
+    error_data: Record<string, string[]>;
 };
 
 export const addUserToGroupFactory = apiFactory<AddUserToGroupResponse>()((api, ctx, utils) => {
@@ -15,15 +15,15 @@ export const addUserToGroupFactory = apiFactory<AddUserToGroupResponse>()((api, 
      * @param memberId User ID or list of user IDs to add
      * @param groupId Group ID
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function addUserToGroup(memberId: string | string[], groupId: string) {
         if (!Array.isArray(memberId)) memberId = [memberId];
 
-        const params: any = {
+        const params = {
             grid: groupId,
             members: memberId,
-            membersTypes: memberId.map(() => -1),
+            memberTypes: memberId.map(() => -1),
             imei: ctx.imei,
             clientLang: ctx.language,
         };

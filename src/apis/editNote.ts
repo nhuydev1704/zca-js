@@ -1,23 +1,24 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type EditNoteResponse = {
-    id: string;
-    type: number;
-    color: number;
-    emoji: string;
-    startTime: number;
-    duration: number;
-    params: {
-        title: string;
-        extra: string;
-    };
-    creatorId: string;
-    editorId: string;
-    createTime: number;
-    editTime: number;
-    repeat: number;
+import type { NoteDetail } from "../models/index.js";
+
+export type EditNoteOptions = {
+    /**
+     * New note title
+     */
+    title: string;
+    /**
+     * Topic ID to edit note from
+     */
+    topicId: string;
+    /**
+     * Should the note be pinned?
+     */
+    pinAct?: boolean;
 };
+
+export type EditNoteResponse = NoteDetail;
 
 export const editNoteFactory = apiFactory<EditNoteResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.group_board[0]}/api/board/topic/updatev2`);
@@ -25,13 +26,12 @@ export const editNoteFactory = apiFactory<EditNoteResponse>()((api, ctx, utils) 
     /**
      * Edit an existing note in a group
      *
-     * @param title note title
-     * @param topicId Topic ID to edit note from
+     * @param options Options for editing the note
      * @param groupId Group ID to create note from
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
-    return async function editNote(title: string, topicId: string, groupId: string) {
+    return async function editNote(options: EditNoteOptions, groupId: string) {
         const params = {
             grid: groupId,
             type: 0,
@@ -40,13 +40,12 @@ export const editNoteFactory = apiFactory<EditNoteResponse>()((api, ctx, utils) 
             startTime: -1,
             duration: -1,
             params: JSON.stringify({
-                title: title,
-                extra: "",
+                title: options.title,
             }),
-            topicId: topicId,
+            topicId: options.topicId,
             repeat: 0,
             imei: ctx.imei,
-            pinAct: 2,
+            pinAct: options.pinAct ? 1 : 2,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
@@ -59,6 +58,13 @@ export const editNoteFactory = apiFactory<EditNoteResponse>()((api, ctx, utils) 
             }),
         });
 
-        return utils.resolve(response);
+        return utils.resolve(response, (result) => {
+            const data = result.data as Omit<NoteDetail, "params"> & { params: unknown };
+            if (typeof data.params == "string") {
+                data.params = JSON.parse(data.params);
+            }
+
+            return data as NoteDetail;
+        });
     };
 });

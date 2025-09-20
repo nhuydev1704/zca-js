@@ -11,11 +11,11 @@ export const enableGroupLinkFactory = apiFactory<EnableGroupLinkResponse>()((api
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/link/new`);
 
     /**
-     * Enable group link
+     * Enable and create new group link
      *
      * @param groupId The group id
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function enableGroupLink(groupId: string) {
         const params = {

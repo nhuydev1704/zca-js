@@ -1,23 +1,15 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import type { QuickMessage, AttachmentSource } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
-export type Message = {
-    title: string;
-    params: string | null;
-};
-
-export type QuickMessage = {
-    id: number;
+export type UpdateQuickMessagePayload = {
     keyword: string;
-    type: number;
-    createdTime: number;
-    lastModified: number;
-    message: Message;
-    media: null;
+    title: string;
+    media?: AttachmentSource;
 };
 
 export type UpdateQuickMessageResponse = {
-    items: QuickMessage[];
+    item: QuickMessage;
     version: number;
 };
 
@@ -26,25 +18,55 @@ export const updateQuickMessageFactory = apiFactory<UpdateQuickMessageResponse>(
 
     /**
      * Update quick message
-     * @notes còn bản có thể up ảnh mà nhiều case quá huhu (dùng tạm bản không có nhé)
-     * 
-     * @param keyword - The keyword of the quick message
-     * @param title - The title of the quick message
+     *
+     * @param updatePayload - The payload containing data to update the quick message
      * @param itemId - The id of the quick message to update
      *
-     * @throws ZaloApiError
+     * @note Zalo might throw an error with code 212 if the itemId does not exist.
+     *
+     * @throws {ZaloApiError}
      */
-    return async function updateQuickMessage(keyword: string, title: string, itemId: number) {
-        const params = {
+    return async function updateQuickMessage(updatePayload: UpdateQuickMessagePayload, itemId: number) {
+        const isType = !updatePayload.media ? 0 : 1;
+
+        const params: Record<string, unknown> = {
             itemId: itemId,
-            keyword: keyword,
+            keyword: updatePayload.keyword,
             message: {
-                title: title,
+                title: updatePayload.title,
                 params: "",
             },
-            media: null,
-            type: 0,
+            type: isType,
         };
+
+        if (isType === 1) {
+            if (!updatePayload.media) throw new ZaloApiError("Media is required");
+            const uploadMedia = await api.uploadProductPhoto({
+                file: updatePayload.media,
+            });
+            
+            const photoId = uploadMedia.photoId;
+            const thumbUrl = uploadMedia.thumbUrl;
+            const normalUrl = uploadMedia.normalUrl;
+            const hdUrl = uploadMedia.hdUrl;
+
+            params.media = {
+                items: [
+                    {
+                        type: 0,
+                        photoId: photoId,
+                        title: "",
+                        width: "",
+                        height: "",
+                        previewThumb: thumbUrl,
+                        rawUrl: normalUrl || hdUrl,
+                        thumbUrl: thumbUrl,
+                        normalUrl: normalUrl || hdUrl,
+                        hdUrl: hdUrl || normalUrl,
+                    },
+                ],
+            };
+        }
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
         if (!encryptedParams) throw new ZaloApiError("Failed to encrypt params");

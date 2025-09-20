@@ -1,13 +1,11 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { ThreadType } from "../models/Enum.js";
+import { ThreadType } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
-export type Data = {
-    updateId: number;
-};
-
 export type RemoveUnreadMarkResponse = {
-    data: Data;
+    data: {
+        updateId: number;
+    };
     status: number;
 };
 
@@ -20,33 +18,23 @@ export const removeUnreadMarkFactory = apiFactory<RemoveUnreadMarkResponse>()((a
      * @param threadId Thread ID
      * @param type Thread type (User/Group)
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function removeUnreadMark(threadId: string, type: ThreadType = ThreadType.User) {
         const timestamp = Date.now();
 
+        const isGroup = type === ThreadType.Group;
         const requestParams = {
             param: JSON.stringify({
-                convsGroup: type === ThreadType.Group ? [threadId] : [],
-                convsUser: type === ThreadType.User ? [threadId] : [],
-                convsGroupData:
-                    type === ThreadType.Group
-                        ? [
-                              {
-                                  id: threadId,
-                                  ts: timestamp,
-                              },
-                          ]
-                        : [],
-                convsUserData:
-                    type === ThreadType.User
-                        ? [
-                              {
-                                  id: threadId,
-                                  ts: timestamp,
-                              },
-                          ]
-                        : [],
+                [isGroup ? "convsGroup" : "convsUser"]: [threadId],
+                [isGroup ? "convsUser" : "convsGroup"]: [],
+                [isGroup ? "convsGroupData" : "convsUserData"]: [
+                    {
+                        id: threadId,
+                        ts: timestamp,
+                    },
+                ],
+                [isGroup ? "convsUserData" : "convsGroupData"]: [],
             }),
         };
 
@@ -60,6 +48,16 @@ export const removeUnreadMarkFactory = apiFactory<RemoveUnreadMarkResponse>()((a
             }),
         });
 
-        return utils.resolve(response);
+        return utils.resolve(response, (result) => {
+            const data = result.data as { data: unknown; status: number };
+            if (typeof data.data === "string") {
+                return {
+                    data: JSON.parse(data.data),
+                    status: data.status,
+                };
+            }
+
+            return result.data as RemoveUnreadMarkResponse;
+        });
     };
 });

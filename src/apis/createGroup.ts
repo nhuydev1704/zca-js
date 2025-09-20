@@ -1,5 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import type { AttachmentSource } from "../models/Attachment.js";
+import type { AttachmentSource } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type CreateGroupResponse = {
@@ -7,7 +7,7 @@ export type CreateGroupResponse = {
     sucessMembers: string[];
     groupId: string;
     errorMembers: string[];
-    error_data: Record<string, any>;
+    error_data: Record<string, unknown>;
 };
 
 export type CreateGroupOptions = {
@@ -38,12 +38,12 @@ export const createGroupFactory = apiFactory<CreateGroupResponse>()((api, ctx, u
      *
      * @param options Group options
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function createGroup(options: CreateGroupOptions) {
         if (options.members.length == 0) throw new ZaloApiError("Group must have at least one member");
 
-        const params: any = {
+        const params = {
             clientId: Date.now(),
             gname: String(Date.now()),
             gdesc: null,
@@ -70,7 +70,7 @@ export const createGroupFactory = apiFactory<CreateGroupResponse>()((api, ctx, u
 
         const data = await utils.resolve(response);
         options.avatarSource = options.avatarSource || options.avatarPath;
-        if (options.avatarSource) await api.changeGroupAvatar(options.avatarSource, data.groupId).catch(console.error);
+        if (options.avatarSource) await api.changeGroupAvatar(options.avatarSource, data.groupId).catch(utils.logger.error);
 
         return data;
     };

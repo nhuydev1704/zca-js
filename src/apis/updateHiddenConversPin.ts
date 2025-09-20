@@ -5,17 +5,17 @@ export type UpdateHiddenConversPinResponse = "";
 
 export const updateHiddenConversPinFactory = apiFactory<UpdateHiddenConversPinResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.conversation[0]}/api/hiddenconvers/update-pin`);
+    const pinRegex = /^\d{4}$/;
 
     /**
      * Update hidden conversation pin
      *
      * @param pin The pin to update (must be a 4-digit number between 0000-9999)
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
-    return async function updateHiddenConversPin(pin: number) {
-        const pinStr = pin.toString().padStart(4, '0');
-        if (!Number.isInteger(pin) || pinStr.length !== 4) {
+    return async function updateHiddenConversPin(pin: string) {
+        if (!pinRegex.test(pin)) {
             throw new ZaloApiError("Pin must be a 4-digit number between 0000-9999");
         }
 

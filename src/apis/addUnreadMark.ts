@@ -1,13 +1,11 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import { ThreadType } from "../models/Enum.js";
+import { ThreadType } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
-export type Data = {
-    updateId: number;
-};
-
 export type AddUnreadMarkResponse = {
-    data: Data;
+    data: {
+        updateId: number;
+    };
     status: number;
 };
 
@@ -20,36 +18,24 @@ export const addUnreadMarkFactory = apiFactory<AddUnreadMarkResponse>()((api, ct
      * @param threadId Thread ID
      * @param type Thread type (User/Group)
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function addUnreadMark(threadId: string, type: ThreadType = ThreadType.User) {
         const timestamp = Date.now();
-        const timestampString = Date.now().toString();
+        const timestampString = timestamp.toString();
+        const isGroup = type === ThreadType.Group;
 
         const requestParams = {
             param: JSON.stringify({
-                convsGroup:
-                    type === ThreadType.Group
-                        ? [
-                              {
-                                  id: threadId,
-                                  cliMsgId: timestampString,
-                                  fromUid: "0",
-                                  ts: timestamp,
-                              },
-                          ]
-                        : [],
-                convsUser:
-                    type === ThreadType.User
-                        ? [
-                              {
-                                  id: threadId,
-                                  cliMsgId: timestampString,
-                                  fromUid: "0",
-                                  ts: timestamp,
-                              },
-                          ]
-                        : [],
+                [isGroup ? "convsGroup" : "convsUser"]: [
+                    {
+                        id: threadId,
+                        cliMsgId: timestampString,
+                        fromUid: "0",
+                        ts: timestamp,
+                    },
+                ],
+                [isGroup ? "convsUser" : "convsGroup"]: [],
                 imei: ctx.imei,
             }),
         };
@@ -64,6 +50,16 @@ export const addUnreadMarkFactory = apiFactory<AddUnreadMarkResponse>()((api, ct
             }),
         });
 
-        return utils.resolve(response);
+        return utils.resolve(response, (result) => {
+            const data = result.data as { data: unknown; status: number };
+            if (typeof data.data === "string") {
+                return {
+                    data: JSON.parse(data.data),
+                    status: data.status,
+                };
+            }
+
+            return result.data as AddUnreadMarkResponse;
+        });
     };
 });

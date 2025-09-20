@@ -1,99 +1,9 @@
-import { Listener } from "./apis/listen.js";
+import { loginQR, LoginQRCallbackEventType, type LoginQRCallback } from "./apis/loginQR.js";
 import { getServerInfo, login } from "./apis/login.js";
-import {
-    createContext,
-    isContextSession,
-    type ContextBase,
-    type ContextSession,
-    type Options,
-    type ZPWServiceMap,
-} from "./context.js";
+import { createContext, isContextSession, type ContextBase, type Options } from "./context.js";
 import { generateZaloUUID, logger } from "./utils.js";
 
 import toughCookie from "tough-cookie";
-import { acceptFriendRequestFactory } from "./apis/acceptFriendRequest.js";
-import { addGroupDeputyFactory } from "./apis/addGroupDeputy.js";
-import { addHiddenConversPinFactory } from "./apis/addHiddenConversPin.js";
-import { addQuickMessageFactory } from "./apis/addQuickMessage.js";
-import { addReactionFactory } from "./apis/addReaction.js";
-import { addUnreadMarkFactory } from "./apis/addUnreadMark.js";
-import { addUserToGroupFactory } from "./apis/addUserToGroup.js";
-import { autoDeleteChatFactory } from "./apis/autoDeleteChat.js";
-import { blockUserFactory } from "./apis/blockUser.js";
-import { blockViewFeedFactory } from "./apis/blockViewFeed.js";
-import { changeFriendAliasFactory } from "./apis/changeFriendAlias.js";
-import { changeGroupAvatarFactory } from "./apis/changeGroupAvatar.js";
-import { changeGroupNameFactory } from "./apis/changeGroupName.js";
-import { changeGroupOwnerFactory } from "./apis/changeGroupOwner.js";
-import { createGroupFactory } from "./apis/createGroup.js";
-import { createNoteFactory } from "./apis/createNote.js";
-import { createPollFactory } from "./apis/createPoll.js";
-import { deleteChatFactory } from "./apis/deleteChat.js";
-import { deleteMessageFactory } from "./apis/deleteMessage.js";
-import { disableGroupLinkFactory } from "./apis/disableGroupLink.js";
-import { disperseGroupFactory } from "./apis/disperseGroup.js";
-import { editNoteFactory } from "./apis/editNote.js";
-import { enableGroupLinkFactory } from "./apis/enableGroupLink.js";
-import { fetchAccountInfoFactory } from "./apis/fetchAccountInfo.js";
-import { findUserFactory } from "./apis/findUser.js";
-import { forwardMessageFactory } from "./apis/forwardMessage.js";
-import { getAliasListFactory } from "./apis/getAliasList.js";
-import { getAllFriendsFactory } from "./apis/getAllFriends.js";
-import { getAllGroupsFactory } from "./apis/getAllGroups.js";
-import { getAutoDeleteChatFactory } from "./apis/getAutoDeleteChat.js";
-import { getBizAccountFactory } from "./apis/getBizAccount.js";
-import { getContextFactory } from "./apis/getContext.js";
-import { getCookieFactory } from "./apis/getCookie.js";
-import { getFriendRequestFactory } from "./apis/getFriendRequest.js";
-import { getGroupInfoFactory } from "./apis/getGroupInfo.js";
-import { getGroupMembersInfoFactory } from "./apis/getGroupMembersInfo.js";
-import { getHiddenConversPinFactory } from "./apis/getHiddenConversPin.js";
-import { getMuteFactory } from "./apis/getMute.js";
-import { getLabelsFactory } from "./apis/getLabels.js";
-import { getOwnIdFactory } from "./apis/getOwnId.js";
-import { getPollDetailFactory } from "./apis/getPollDetail.js";
-import { getQRFactory } from "./apis/getQR.js";
-import { getQuickMessageFactory } from "./apis/getQuickMessage.js";
-import { getStickersFactory } from "./apis/getStickers.js";
-import { getStickersDetailFactory } from "./apis/getStickersDetail.js";
-import { getUnreadMarkFactory } from "./apis/getUnreadMark.js";
-import { getUserInfoFactory } from "./apis/getUserInfo.js";
-import { inviteUserToGroupsFactory } from "./apis/inviteUserToGroups.js";
-import { keepAliveFactory } from "./apis/keepAlive.js";
-import { lockPollFactory } from "./apis/lockPoll.js";
-import { loginQR, LoginQRCallbackEventType, type LoginQRCallback } from "./apis/loginQR.js";
-import { parseLinkFactory } from "./apis/parseLink.js";
-import { pinConversationsFactory } from "./apis/pinConversations.js";
-import { removeFriendAliasFactory } from "./apis/removeFriendAlias.js";
-import { removeGroupDeputyFactory } from "./apis/removeGroupDeputy.js";
-import { removeHiddenConversPinFactory } from "./apis/removeHiddenConversPin.js";
-import { removeQuickMessageFactory } from "./apis/removeQuickMessage.js";
-import { removeUnreadMarkFactory } from "./apis/removeUnreadMark.js";
-import { removeUserFromGroupFactory } from "./apis/removeUserFromGroup.js";
-import { resetHiddenConversPinFactory } from "./apis/resetHiddenConversPin.js";
-import { sendCardFactory } from "./apis/sendCard.js";
-import { sendDeliveredEventFactory } from "./apis/sendDeliveredEvent.js";
-import { sendFriendRequestFactory } from "./apis/sendFriendRequest.js";
-import { sendLinkFactory } from "./apis/sendLink.js";
-import { sendMessageFactory } from "./apis/sendMessage.js";
-import { sendReportFactory } from "./apis/sendReport.js";
-import { sendSeenEventFactory } from "./apis/sendSeenEvent.js";
-import { sendStickerFactory } from "./apis/sendSticker.js";
-import { sendTypingEventFactory } from "./apis/sendTypingEvent.js";
-import { sendVideoFactory } from "./apis/sendVideo.js";
-import { sendVoiceFactory } from "./apis/sendVoice.js";
-import { setMuteFactory } from "./apis/setMute.js";
-import { unblockUserFactory } from "./apis/unblockUser.js";
-import { undoFactory } from "./apis/undo.js";
-import { updateAutoDeleteChatFactory } from "./apis/updateAutoDeleteChat.js";
-import { updateGroupSettingsFactory } from "./apis/updateGroupSettings.js";
-import { updateHiddenConversPinFactory } from "./apis/updateHiddenConversPin.js";
-import { updateLabelsFactory } from "./apis/updateLabels.js";
-import { updateLangFactory } from "./apis/updateLang.js";
-import { updateProfileFactory } from "./apis/updateProfile.js";
-import { updateQuickMessageFactory } from "./apis/updateQuickMessage.js";
-import { updateSettingsFactory } from "./apis/updateSettings.js";
-import { uploadAttachmentFactory } from "./apis/uploadAttachment.js";
 
 import { ZaloApiError } from "./Errors/ZaloApiError.js";
 import { checkUpdate } from "./update.js";
@@ -126,6 +36,7 @@ import { getLastOnlineFactory } from "./apis/personal/getLastOnline.js";
 import { getFriendReqStatusFactory } from "./apis/personal/getFriendReqStatus.js";
 import { undoFriendRequestFactory } from "./apis/personal/undoFriendReq.js";
 import { rejectFriendRequestFactory } from "./apis/personal/rejectFriendReq.js";
+import { API } from "./apis.js";
 
 export type Cookie = {
     domain: string;
@@ -170,14 +81,20 @@ export class Zalo {
                     }) ?? "",
                     "https://chat.zalo.me",
                 );
-            } catch {}
+            } catch (error: unknown) {
+                logger({
+                    options: {
+                        logging: this.options.logging,
+                    },
+                }).error("Failed to set cookie:", error);
+            }
         }
         return jar;
     }
 
     private validateParams(credentials: Credentials) {
         if (!credentials.imei || !credentials.cookie || !credentials.userAgent) {
-            throw new Error("Missing required params");
+            throw new ZaloApiError("Missing required params");
         }
     }
 
@@ -201,21 +118,25 @@ export class Zalo {
         const loginData = await login(ctx, this.enableEncryptParam);
         const serverInfo = await getServerInfo(ctx, this.enableEncryptParam);
 
-        if (!loginData || !serverInfo) throw new Error("Đăng nhập thất bại");
-        ctx.secretKey = loginData.data.zpw_enk;
-        ctx.uid = loginData.data.uid;
+        const loginInfo = loginData?.data as typeof ctx.loginInfo;
+
+        if (!loginData || !loginInfo || !serverInfo) throw new ZaloApiError("Đăng nhập thất bại");
+
+        ctx.secretKey = loginInfo.zpw_enk;
+        ctx.uid = loginInfo.uid;
 
         // Zalo currently responds with setttings instead of settings
         // they might fix this in the future, so we should have a fallback just in case
         ctx.settings = serverInfo.setttings || serverInfo.settings;
 
         ctx.extraVer = serverInfo.extra_ver;
+        ctx.loginInfo = loginInfo;
 
-        if (!isContextSession(ctx)) throw new Error("Khởi tạo ngữ cảnh thát bại.");
+        if (!isContextSession(ctx)) throw new ZaloApiError("Khởi tạo ngữ cảnh thất bại.");
 
-        logger(ctx).info("Logged in as", loginData.data.uid);
+        logger(ctx).info("Logged in as", loginInfo.uid);
 
-        return new API(ctx, loginData.data.zpw_service_map_v3, loginData.data.zpw_ws);
+        return new API(ctx, loginInfo.zpw_service_map_v3, loginInfo.zpw_ws);
     }
 
     private async onlyLoginCookie(ctx: ContextBase, credentials: Credentials) {
@@ -576,3 +497,4 @@ export class API {
         this.custom = customFactory(ctx, this);
     }
 }
+export { API };

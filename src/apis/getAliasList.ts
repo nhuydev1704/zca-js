@@ -14,11 +14,11 @@ export const getAliasListFactory = apiFactory<GetAliasListResponse>()((api, ctx,
 
     /**
      * Get alias list
-     * 
+     *
      * @param count Page size (default: 100)
      * @param page Page number (default: 1)
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function getAliasList(count: number = 100, page: number = 1) {
         const params = {

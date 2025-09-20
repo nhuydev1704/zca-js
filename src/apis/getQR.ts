@@ -2,7 +2,7 @@ import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
 export type GetQRResponse = {
-    [userId: string]: string
+    [userId: string]: string;
 };
 
 export const getQRFactory = apiFactory<GetQRResponse>()((api, _, utils) => {
@@ -11,9 +11,9 @@ export const getQRFactory = apiFactory<GetQRResponse>()((api, _, utils) => {
     /**
      * Get QR code for users
      *
-     * @param userId User ID or list of user IDs (string[]). If userId is a string, it will be wrapped in an array.
+     * @param userId User ID or list of user IDs
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function getQR(userId: string | string[]) {
         if (typeof userId == "string") userId = [userId];

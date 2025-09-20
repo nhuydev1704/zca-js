@@ -52,7 +52,7 @@ function prompt() {
                 decodeHTTP();
             } else if (answer == "2") {
                 console.clear();
-                console.log("\x1b[38;5;165m[ WEBSOCKET ] Bắt đầu khởi động\x1b[0m");
+                console.log("\x1b[38;5;165m[ WEBSOCKET ] Bắt đầu khởi động!\x1b[0m");
                 decodeWebsocket();
             } else if (answer == "3") exit();
             else {
@@ -95,7 +95,7 @@ function decodeHTTP() {
 async function decodeWebsocket() {
     if (!cipher_key) {
         console.log(
-            "Mở devtools trên trình duyệt tại https://chat.zalo.me/, vào tab Network -> WS\nMở tin nhắn đầu tiên, đổi sang định dạng UTF-8",
+            "Mở devtools trên trình duyệt tại https://chat.zalo.me/, vào tab Network -> (WS/Socket)\nMở tin nhắn đầu tiên, đổi sang định dạng UTF-8",
         );
         cipher_key = await promptForCipherKey();
     }
@@ -151,24 +151,18 @@ async function getSecretKey(): Promise<string> {
     }
 }
 
-function getFreshKey() {
+async function getFreshKey() {
     gotFresh = true;
-    return new Promise<string>(async (resolve, reject) => {
-        try {
-            const zalo = new Zalo({
-                selfListen: true,
-                logging: true,
-            });
-
-            console.log();
-            const api = await zalo.login(credentials);
-            fs.writeFileSync(SECRET_PATH, api.getContext().secretKey, "utf-8");
-
-            resolve(api.getContext().secretKey);
-        } catch (error) {
-            reject(error);
-        }
+    const zalo = new Zalo({
+        selfListen: true,
+        logging: true,
     });
+
+    console.log();
+    const api = await zalo.login(credentials);
+    fs.writeFileSync(SECRET_PATH, api.getContext().secretKey, "utf-8");
+
+    return api.getContext().secretKey;
 }
 
 async function promptForCipherKey() {

@@ -1,6 +1,8 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
+import type { PollDetail } from "../models/index.js";
+
 /**
  * Options for creating a poll.
  */
@@ -19,11 +21,6 @@ export type CreatePollOptions = {
      * Poll expiration time in milliseconds (0 = no expiration).
      */
     expiredTime?: number;
-
-    /**
-     * Pin action to pin the poll.
-     */
-    pinAct?: boolean;
 
     /**
      * Allows multiple choices in the poll.
@@ -46,23 +43,7 @@ export type CreatePollOptions = {
     isAnonymous?: boolean;
 };
 
-export type CreatePollResponse = {
-    creator: string;
-    question: string;
-    options: string[];
-    joined: boolean;
-    closed: boolean;
-    poll_id: string;
-    allow_multi_choices: boolean;
-    allow_add_new_option: boolean;
-    is_anonymous: boolean;
-    poll_type: number;
-    created_time: number;
-    updated_time: number;
-    expiried_time: number;
-    is_hide_vote_preview: boolean;
-    num_vote: number;
-};
+export type CreatePollResponse = PollDetail;
 
 export const createPollFactory = apiFactory<CreatePollResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/poll/create`);
@@ -73,7 +54,7 @@ export const createPollFactory = apiFactory<CreatePollResponse>()((api, ctx, uti
      * @param options Poll options
      * @param groupId Group ID to create poll from
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function createPoll(options: CreatePollOptions, groupId: string) {
         const params = {
@@ -81,7 +62,7 @@ export const createPollFactory = apiFactory<CreatePollResponse>()((api, ctx, uti
             question: options.question,
             options: options.options,
             expired_time: options.expiredTime ?? 0,
-            pinAct: !!options.pinAct,
+            pinAct: false,
             allow_multi_choices: !!options.allowMultiChoices,
             allow_add_new_option: !!options.allowAddNewOption,
             is_hide_vote_preview: !!options.hideVotePreview,

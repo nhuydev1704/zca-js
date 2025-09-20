@@ -1,4 +1,5 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import type { NoteDetail } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
 export type CreateNoteOptions = {
@@ -6,22 +7,7 @@ export type CreateNoteOptions = {
     pinAct?: boolean;
 };
 
-export type CreateNoteResponse = {
-    id: string;
-    type: number;
-    color: number;
-    emoji: string;
-    startTime: number;
-    duration: number;
-    params: {
-        title: string;
-    };
-    creatorId: string;
-    editorId: string;
-    createTime: number;
-    editTime: number;
-    repeat: number;
-};
+export type CreateNoteResponse = NoteDetail;
 
 export const createNoteFactory = apiFactory<CreateNoteResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.group_board[0]}/api/board/topic/createv2`);
@@ -31,10 +17,10 @@ export const createNoteFactory = apiFactory<CreateNoteResponse>()((api, ctx, uti
      *
      * @param options note options
      * @param options.title note title
-     * @param options.pinAct Pin action (pin note)
-     * @param groupId Group ID to create note from
+     * @param options.pinAct pin action (pin note)
+     * @param groupId group id
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
     return async function createNote(options: CreateNoteOptions, groupId: string) {
         const params = {
@@ -63,6 +49,14 @@ export const createNoteFactory = apiFactory<CreateNoteResponse>()((api, ctx, uti
             }),
         });
 
-        return utils.resolve(response);
+        return utils.resolve(response, (result) => {
+            if (typeof (result.data as { params: unknown }).params === "string") {
+                (result.data as CreateNoteResponse).params = JSON.parse(
+                    (result.data as { params: string }).params,
+                );
+            }
+
+            return result.data as CreateNoteResponse;
+        });
     };
 });

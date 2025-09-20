@@ -1,59 +1,56 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
+import type { Gender, ZBusinessPackage } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
-export type CollapseMsgListConfig = {
+export type FriendRecommendationsCollapseMsgListConfig = {
     collapseId: number;
     collapseXItem: number;
     collapseYItem: number;
 };
 
-export type RecommInfo = {
-    source: number;
-    message: string;
-};
-
-export type BizPkg = {
-    pkgId: number;
-};
-
-export type DataInfo = {
+export type FriendRecommendationsDataInfo = {
     userId: string;
     zaloName: string;
     displayName: string;
     avatar: string;
     phoneNumber: string;
     status: string;
-    gender: number;
+    gender: Gender;
     dob: number;
     type: number;
     recommType: number;
     recommSrc: number;
     recommTime: number;
-    recommInfo: RecommInfo;
-    bizPkg: BizPkg;
+    recommInfo: {
+        suggestWay: number;
+        source: number;
+        message: string;
+        customText: string | null;
+    };
+    bizPkg: ZBusinessPackage;
     isSeenFriendReq: boolean;
 };
 
-export type RecommItem = {
+export type FriendRecommendationsRecommItem = {
     recommItemType: number;
-    dataInfo: DataInfo;
+    dataInfo: FriendRecommendationsDataInfo;
 };
 
-export type GetFriendRequestResponse = {
+export type GetFriendRecommendationsResponse = {
     expiredDuration: number;
-    collapseMsgListConfig: CollapseMsgListConfig;
-    recommItems: RecommItem[];
+    collapseMsgListConfig: FriendRecommendationsCollapseMsgListConfig;
+    recommItems: FriendRecommendationsRecommItem[];
 };
 
-export const getFriendRequestFactory = apiFactory<GetFriendRequestResponse>()((api, ctx, utils) => {
+export const getFriendRecommendationsFactory = apiFactory<GetFriendRecommendationsResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.friend[0]}/api/friend/recommendsv2/list`);
 
     /**
-     * Get friend requests
+     * Get friend recommendations
      *
-     * @throws ZaloApiError
+     * @throws {ZaloApiError}
      */
-    return async function getFriendRequest() {
+    return async function getFriendRecommendations() {
         const params = {
             imei: ctx.imei,
         };
