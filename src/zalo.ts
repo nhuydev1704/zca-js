@@ -1,11 +1,6 @@
 import { loginQR, LoginQRCallbackEventType, type LoginQRCallback } from "./apis/loginQR.js";
 import { getServerInfo, login } from "./apis/login.js";
-import {
-    createContext,
-    isContextSession,
-    type ContextBase,
-    type Options,
-} from "./context.js";
+import { createContext, isContextSession, type ContextBase, type Options } from "./context.js";
 import { generateZaloUUID, logger } from "./utils.js";
 
 import toughCookie from "tough-cookie";
@@ -44,25 +39,30 @@ export class Zalo {
         const cookieArr = Array.isArray(cookie) ? cookie : cookie.cookies;
 
         cookieArr.forEach((e, i) => {
-            if (typeof e.domain == "string" && e.domain.startsWith(".")) cookieArr[i].domain = e.domain.slice(1);
+            if (typeof e.domain === "string" && e.domain.startsWith(".")) {
+                cookieArr[i].domain = e.domain.slice(1);
+            }
         });
 
         const jar = new toughCookie.CookieJar();
         for (const each of cookieArr) {
             try {
+                const domain = each.domain || "zalo.me";
+                const url = `https://${domain}`;
+
                 jar.setCookieSync(
                     toughCookie.Cookie.fromJSON({
                         ...each,
                         key: (each as toughCookie.SerializedCookie).key || each.name,
                     }) ?? "",
-                    "https://chat.zalo.me",
+                    url,
                 );
             } catch (error: unknown) {
                 logger({
                     options: {
                         logging: this.options.logging,
                     },
-                }).error("Failed to set cookie:", error);
+                }).error("Failed to set cookie:", error, each);
             }
         }
         return jar;
@@ -113,6 +113,85 @@ export class Zalo {
         logger(ctx).info("Logged in as", loginInfo.uid);
 
         return new API(ctx, loginInfo.zpw_service_map_v3, loginInfo.zpw_ws);
+    }
+
+    private async onlyLoginCookie(ctx: ContextBase, credentials: Credentials) {
+        await checkUpdate(ctx);
+
+        this.validateParams(credentials);
+
+        ctx.imei = credentials.imei;
+        ctx.cookie = this.parseCookies(credentials.cookie);
+        ctx.userAgent = credentials.userAgent;
+        ctx.language = credentials.language || "vi";
+
+        const loginData = await login(ctx, this.enableEncryptParam);
+        const serverInfo = await getServerInfo(ctx, this.enableEncryptParam);
+
+        const loginInfo = loginData?.data as typeof ctx.loginInfo;
+
+        if (!loginData || !loginInfo || !serverInfo) throw new ZaloApiError("Đăng nhập thất bại");
+
+        ctx.secretKey = loginInfo.zpw_enk;
+        ctx.uid = loginInfo.uid;
+
+        // Zalo currently responds with setttings instead of settings
+        // they might fix this in the future, so we should have a fallback just in case
+        ctx.settings = serverInfo.setttings || serverInfo.settings;
+
+        ctx.extraVer = serverInfo.extra_ver;
+
+        if (!isContextSession(ctx)) throw new Error("Khởi tạo ngữ cảnh thát bại.");
+
+        logger(ctx).info("Logged in as", loginInfo.uid);
+
+        return loginInfo;
+    }
+
+    public async onlyLoginQr(
+        options: { userAgent?: string; language?: string; qrPath?: string },
+        callback: LoginQRCallback,
+    ) {
+        if (!options) options = {};
+        if (!options.userAgent)
+            options.userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:133.0) Gecko/20100101 Firefox/133.0";
+        if (!options.language) options.language = "vi";
+
+        const ctx = createContext(this.options.apiType, this.options.apiVersion);
+        Object.assign(ctx.options, this.options);
+
+        const loginQRResult = await loginQR(
+            ctx,
+            options as { userAgent: string; language: string; qrPath?: string },
+            callback,
+        );
+        if (!loginQRResult) throw new ZaloApiError("Unable to login with QRCode");
+
+        const imei = generateZaloUUID(options.userAgent);
+
+        // login account with cookie
+        const loginInfo = await this.onlyLoginCookie(ctx, {
+            cookie: loginQRResult.cookies,
+            imei,
+            userAgent: options.userAgent,
+            language: options.language,
+        });
+
+        // Thanks to @YanCastle for this great suggestion!
+        return callback({
+            type: LoginQRCallbackEventType.GotLoginInfo,
+            data: {
+                cookie: loginQRResult.cookies,
+                imei,
+                userAgent: options.userAgent,
+                uid: loginInfo.uid,
+                userInfo: {
+                    ...loginQRResult.userInfo,
+                    phone: loginInfo.phone_number,
+                },
+            },
+            actions: null,
+        });
     }
 
     public async loginQR(

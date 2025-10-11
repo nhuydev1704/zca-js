@@ -21,6 +21,7 @@ export type LoginQRCallbackEvent =
           data: {
               code: string;
               image: string;
+              full_image: string;
               options: {
                   enabledCheckOCR: boolean;
                   enabledMultiLayer: boolean;
@@ -67,6 +68,8 @@ export type LoginQRCallbackEvent =
               cookie: SerializedCookie[];
               imei: string;
               userAgent: string;
+              uid?: string;
+              userInfo?: unknown;
           };
           actions: null;
       };
@@ -429,6 +432,7 @@ export async function loginQR(
                     data: {
                         ...qrGenResult.data,
                         image: qrGenResult.data.image.replace(/^data:image\/png;base64,/, ""),
+                        full_image: qrGenResult.data.image,
                     },
                     actions: {
                         async saveToFile(qrPath = options.qrPath ?? "qr.png") {

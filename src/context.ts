@@ -60,6 +60,7 @@ type SocketSettings = {
 type LoginInfo = {
     // eslint-disable-next-line
     [key: string]: any;
+    uid: string;
     haspcclient: number;
     public_ip: string;
     language: string;

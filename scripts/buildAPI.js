@@ -6,24 +6,55 @@ const outputFile = path.join(process.cwd(), "src", "apis.ts");
 
 function getAllApiFiles(dir) {
     const ignoreFiles = ["listen.ts", "login.ts", "loginQR.ts", "custom.ts"];
-    return fs
-        .readdirSync(dir)
-        .filter((file) => file.endsWith(".ts") && !ignoreFiles.includes(file))
-        .map((file) => {
-            const nonExtension = file.slice(0, -3); // Remove .ts extension
+    const files = [];
 
-            return {
-                name: nonExtension,
-                factoryName: `${nonExtension}Factory`,
-            };
-        });
+    const getFiles = (targetDir, subDir = "") => {
+        fs.readdirSync(targetDir)
+            .filter((file) => file.endsWith(".ts") && !ignoreFiles.includes(file))
+            .forEach((file) => {
+                const nonExtension = file.replace(/\.ts$/, "");
+                files.push({
+                    name: nonExtension,
+                    factoryName: `${nonExtension}Factory`,
+                    relativePath: subDir ? `${subDir}/${nonExtension}` : nonExtension,
+                });
+            });
+    };
+
+    // root
+    getFiles(dir);
+
+    // custom
+    const customDir = path.join(dir, "custom");
+    if (fs.existsSync(customDir) && fs.statSync(customDir).isDirectory()) {
+        getFiles(customDir, "custom");
+    }
+
+    // stickers
+    const stickersDir = path.join(dir, "stickers");
+    if (fs.existsSync(stickersDir) && fs.statSync(stickersDir).isDirectory()) {
+        getFiles(stickersDir, "stickers");
+    }
+
+    // group
+    const groupDir = path.join(dir, "group");
+    if (fs.existsSync(groupDir) && fs.statSync(groupDir).isDirectory()) {
+        getFiles(groupDir, "group");
+    }
+
+    // personal
+    const personalDir = path.join(dir, "personal");
+    if (fs.existsSync(personalDir) && fs.statSync(personalDir).isDirectory()) {
+        getFiles(personalDir, "personal");
+    }
+
+    return files;
 }
-
 function generateAPIsFile() {
     const allApiFiles = getAllApiFiles(apisDir);
 
     const importLines = allApiFiles.map((file) => {
-        return `import { ${file.factoryName} } from "./apis/${file.name}.js";`;
+        return `import { ${file.factoryName} } from "./apis/${file.relativePath}.js";`;
     });
 
     const propertyLines = allApiFiles.map((file) => {
