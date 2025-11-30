@@ -2,16 +2,7 @@ export * from "./Errors/index.js";
 export * from "./models/index.js";
 export * from "./zalo.js";
 
-export type {
-    ContextSession,
-    ContextBase,
-    AppContextExtended,
-    AppContextBase,
-    Options,
-    ZPWServiceMap,
-    ImageMetadataGetter,
-    ImageMetadataGetterResponse,
-} from "./context.js";
+export type { ContextSession, ContextBase, AppContextExtended, AppContextBase, Options, ZPWServiceMap, ImageMetadataGetter,ImageMetadataGetterResponse } from "./context.js";
 
 // API TYPES
 export type { AcceptFriendRequestResponse } from "./apis/acceptFriendRequest.js";
@@ -35,12 +26,7 @@ export type { CreateGroupOptions, CreateGroupResponse } from "./apis/createGroup
 export type { CreateNoteOptions, CreateNoteResponse } from "./apis/createNote.js";
 export type { CreatePollOptions, CreatePollResponse } from "./apis/createPoll.js";
 export type { CreateProductCatalogPayload, CreateProductCatalogResponse } from "./apis/createProductCatalog.js";
-export type {
-    CreateReminderOptions,
-    CreateReminderResponse,
-    CreateReminderUser,
-    CreateReminderGroup,
-} from "./apis/createReminder.js";
+export type { CreateReminderOptions, CreateReminderResponse, CreateReminderUser, CreateReminderGroup } from "./apis/createReminder.js";
 export type { DeleteAutoReplyResponse } from "./apis/deleteAutoReply.js";
 export type { DeleteAvatarResponse } from "./apis/deleteAvatar.js";
 export type { DeleteCatalogResponse } from "./apis/deleteCatalog.js";
@@ -51,21 +37,11 @@ export type { DeleteProductCatalogPayload, DeleteProductCatalogResponse } from "
 export type { DisableGroupLinkResponse } from "./apis/disableGroupLink.js";
 export type { DisperseGroupResponse } from "./apis/disperseGroup.js";
 export type { EditNoteOptions, EditNoteResponse } from "./apis/editNote.js";
-export type {
-    EditReminderGroup,
-    EditReminderUser,
-    EditReminderOptions,
-    EditReminderResponse,
-} from "./apis/editReminder.js";
+export type { EditReminderGroup, EditReminderUser, EditReminderOptions, EditReminderResponse } from "./apis/editReminder.js";
 export type { EnableGroupLinkResponse } from "./apis/enableGroupLink.js";
 export type { FetchAccountInfoResponse } from "./apis/fetchAccountInfo.js";
 export type { FindUserResponse } from "./apis/findUser.js";
-export type {
-    ForwardMessageSuccess,
-    ForwardMessageFail,
-    ForwardMessagePayload,
-    ForwardMessageResponse,
-} from "./apis/forwardMessage.js";
+export type { ForwardMessageSuccess, ForwardMessageFail, ForwardMessagePayload, ForwardMessageResponse } from "./apis/forwardMessage.js";
 export type { GetAliasListResponse } from "./apis/getAliasList.js";
 export type { GetAllFriendsResponse } from "./apis/getAllFriends.js";
 export type { GetAllGroupsResponse } from "./apis/getAllGroups.js";
@@ -87,12 +63,7 @@ export type { GetGroupMembersInfoResponse, GroupMemberProfile } from "./apis/get
 export type { GetHiddenConversationsResponse } from "./apis/getHiddenConversations.js";
 export type { GetLabelsResponse } from "./apis/getLabels.js";
 export type { BoardItem, GetListBoardResponse, ListBoardOptions } from "./apis/getListBoard.js";
-export type {
-    GetListReminderResponse,
-    ListReminderOptions,
-    ReminderListGroup,
-    ReminderListUser,
-} from "./apis/getListReminder.js";
+export type { GetListReminderResponse, ListReminderOptions, ReminderListGroup, ReminderListUser } from "./apis/getListReminder.js";
 export type { GetMuteResponse, MuteEntriesInfo } from "./apis/getMute.js";
 export type { GetPendingGroupMembersResponse, GetPendingGroupMembersUserInfo } from "./apis/getPendingGroupMembers.js";
 export type { GetPinConversationsResponse } from "./apis/getPinConversations.js";
@@ -100,12 +71,7 @@ export type { PollDetailResponse } from "./apis/getPollDetail.js";
 export type { GetProductCatalogListPayload, GetProductCatalogListResponse } from "./apis/getProductCatalogList.js";
 export type { GetQRResponse } from "./apis/getQR.js";
 export type { GetQuickMessageListResponse } from "./apis/getQuickMessageList.js";
-export type {
-    GetFriendRecommendationsResponse,
-    FriendRecommendationsCollapseMsgListConfig,
-    FriendRecommendationsDataInfo,
-    FriendRecommendationsRecommItem,
-} from "./apis/getFriendRecommendations.js";
+export type { GetFriendRecommendationsResponse, FriendRecommendationsCollapseMsgListConfig, FriendRecommendationsDataInfo, FriendRecommendationsRecommItem, FriendRecommendationsType } from "./apis/getFriendRecommendations.js";
 export type { GetRelatedFriendGroupResponse } from "./apis/getRelatedFriendGroup.js";
 export type { GetReminderResponse } from "./apis/getReminder.js";
 export type { GetReminderResponsesResponse } from "./apis/getReminderResponses.js";
@@ -135,29 +101,20 @@ export type { RemoveUnreadMarkResponse } from "./apis/removeUnreadMark.js";
 export type { RemoveUserFromGroupResponse } from "./apis/removeUserFromGroup.js";
 export type { ResetHiddenConversPinResponse } from "./apis/resetHiddenConversPin.js";
 export type { ReuseAvatarResponse } from "./apis/reuseAvatar.js";
-export type {
-    ReviewPendingMemberRequestPayload,
-    ReviewPendingMemberRequestResponse,
-} from "./apis/reviewPendingMemberRequest.js";
+export type { ReviewPendingMemberRequestPayload, ReviewPendingMemberRequestResponse } from "./apis/reviewPendingMemberRequest.js";
 export type { SendBankCardPayload, SendBankCardResponse } from "./apis/sendBankCard.js";
 export type { SendCardOptions, SendCardResponse } from "./apis/sendCard.js";
 export type { SendDeliveredEventMessageParams, SendDeliveredEventResponse } from "./apis/sendDeliveredEvent.js";
 export type { SendFriendRequestResponse } from "./apis/sendFriendRequest.js";
 export type { SendLinkOptions, SendLinkResponse } from "./apis/sendLink.js";
-export type {
-    Mention,
-    MessageContent,
-    SendMessageQuote,
-    SendMessageResponse,
-    SendMessageResult,
-    Style,
-} from "./apis/sendMessage.js";
+export type { Mention, MessageContent, SendMessageQuote, SendMessageResponse, SendMessageResult, Style } from "./apis/sendMessage.js";
 export type { SendReportOptions, SendReportResponse } from "./apis/sendReport.js";
 export type { SendSeenEventMessageParams, SendSeenEventResponse } from "./apis/sendSeenEvent.js";
 export type { SendStickerResponse, SendStickerPayload } from "./apis/sendSticker.js";
 export type { SendTypingEventResponse } from "./apis/sendTypingEvent.js";
 export type { SendVideoOptions, SendVideoResponse } from "./apis/sendVideo.js";
 export type { SendVoiceOptions, SendVoiceResponse } from "./apis/sendVoice.js";
+export type { SetArchivedConversationsTarget, SetArchivedConversationsResponse } from "./apis/setArchivedConversations.js";
 export type { SetHiddenConversationsResponse } from "./apis/setHiddenConversations.js";
 export type { SetMuteParams, SetMuteResponse } from "./apis/setMute.js";
 export type { SetPinnedConversationsResponse } from "./apis/setPinnedConversations.js";
@@ -177,25 +134,9 @@ export type { UpdateProductCatalogPayload, UpdateProductCatalogResponse } from "
 export type { UpdateProfilePayload, UpdateProfileResponse } from "./apis/updateProfile.js";
 export type { UpdateQuickMessagePayload, UpdateQuickMessageResponse } from "./apis/updateQuickMessage.js";
 export type { UpdateSettingsResponse } from "./apis/updateSettings.js";
-export type {
-    FileData,
-    ImageData,
-    UploadAttachmentResponse,
-    UploadAttachmentType,
-    UploadAttachmentImageResponse,
-    UploadAttachmentVideoResponse,
-    UploadAttachmentFileResponse,
-} from "./apis/uploadAttachment.js";
+export type { FileData, ImageData, UploadAttachmentResponse, UploadAttachmentType, UploadAttachmentImageResponse, UploadAttachmentVideoResponse, UploadAttachmentFileResponse } from "./apis/uploadAttachment.js";
 export type { UploadProductPhotoPayload, UploadProductPhotoResponse } from "./apis/uploadProductPhoto.js";
 export type { VotePollResponse } from "./apis/votePoll.js";
-
-// custom type
-
-export type { FetchProfileExtraResponse } from "./apis/personal/getProfileExtra.js";
-export type { FetchLastOnlineResponse } from "./apis/personal/getLastOnline.js";
-export type { FetchFriendReqStatusResponse } from "./apis/personal/getFriendReqStatus.js";
-export type { SearchByUsernameResponse } from "./apis/personal/searchByUsername.js";
-export type { SearchMultiUserByPhoneResponse } from "./apis/personal/searchMultiUsersByPhones.js";
 
 export type { CustomAPICallback, CustomAPIProps } from "./apis/custom.js";
 
