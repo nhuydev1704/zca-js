@@ -1,36 +1,25 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import type { Gender, ZBusinessPackage } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
-export type GetMultiUsersByPhoneResponse = {
-    [phoneNumber: string]: {
-        avatar: string;
-        cover: string;
-        status: string;
-        gender: Gender;
-        dob: number;
-        sdob: string;
-        globalId: string;
-        bizPkg: ZBusinessPackage;
-        uid: string;
-        zalo_name: string;
-        display_name: string;
-    };
+import { AvatarSize, type UserBasic } from "../models/index.js";
+
+export type GetMultiUsersByPhonesResponse = {
+    [phoneNumber: string]: UserBasic;
 };
 
-export const getMultiUsersByPhoneFactory = apiFactory<GetMultiUsersByPhoneResponse>()((api, ctx, utils) => {
+export const getMultiUsersByPhonesFactory = apiFactory<GetMultiUsersByPhonesResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.friend[0]}/api/friend/profile/multiget`);
 
     /**
-     * Get multiple user(s) by phone number
+     * Get multiple user(s) by their phone numbers.
      *
-     * @param phoneNumber Phone(s) number
-     * @param isAvatarSizeMax Is avatar size max (default: true)
+     * @param phoneNumbers Phone number(s)
+     * @param avatarSize Avatar size (default: AvatarSize.Large)
      *
      * @throws {ZaloApiError}
      */
-    return async function getMultiUsersByPhone(phoneNumbers: string | string[], isAvatarSizeMax: boolean = true) {
-        if (!phoneNumbers) throw new ZaloApiError("Missing phoneNumber");
+    return async function getMultiUsersByPhones(phoneNumbers: string | string[], avatarSize: AvatarSize = AvatarSize.Large) {
+        if (!phoneNumbers) throw new ZaloApiError("Missing phoneNumbers");
         if (!Array.isArray(phoneNumbers)) phoneNumbers = [phoneNumbers];
 
         phoneNumbers = phoneNumbers.map((phone) => {
@@ -42,7 +31,7 @@ export const getMultiUsersByPhoneFactory = apiFactory<GetMultiUsersByPhoneRespon
 
         const params = {
             phones: phoneNumbers,
-            avatar_size: isAvatarSizeMax ? 240 : 120,
+            avatar_size: avatarSize,
             language: ctx.language,
         };
 

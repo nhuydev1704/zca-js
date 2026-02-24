@@ -1,15 +1,16 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
+import { GroupMessage, type TGroupMessage } from "../models/index.js";
+
 export type GetGroupChatHistoryResponse = {
     lastActionId: string;
     lastActionIdOther: string;
     more: number;
-    // @TODO: check type
-    groupMsgs: unknown[];
+    groupMsgs: GroupMessage[];
 };
 
-export const getGroupChatHistoryFactory = apiFactory<GetGroupChatHistoryResponse>()((api, _ctx, utils) => {
+export const getGroupChatHistoryFactory = apiFactory<GetGroupChatHistoryResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.group[0]}/api/group/history`);
 
     /**
@@ -33,6 +34,18 @@ export const getGroupChatHistoryFactory = apiFactory<GetGroupChatHistoryResponse
             method: "GET",
         });
 
-        return utils.resolve(response);
+        return utils.resolve(response, (result) => {
+            let data = result.data as unknown as GetGroupChatHistoryResponse | string;
+
+            if (typeof data === "string") {
+                data = JSON.parse(data) as GetGroupChatHistoryResponse;
+            }
+
+            for (let i = 0; i < data.groupMsgs.length; i++) {
+                data.groupMsgs[i] = new GroupMessage(ctx.uid, data.groupMsgs[i] as unknown as TGroupMessage);
+            }
+
+            return data;
+        });
     };
 });

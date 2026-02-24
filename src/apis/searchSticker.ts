@@ -1,24 +1,22 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
 import { apiFactory } from "../utils.js";
 
-export type GetSearchStickerResponse = {
-    sticker_id: number;
-    cate_id: number;
-    type: number;
-}[];
+import type { StickerBasic } from "../models/index.js";
 
-export const getSearchStickerFactory = apiFactory<GetSearchStickerResponse>()((api, ctx, utils) => {
+export type SearchStickerResponse = StickerBasic[];
+
+export const searchStickerFactory = apiFactory<SearchStickerResponse>()((api, ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.sticker[0]}/api/message/sticker/search`);
 
     /**
-     * Get search sticker
+     * Search stickers
      *
-     * @param keyword Keyword to search sticker
+     * @param keyword Keyword to search stickers
      * @param limit Limit of stickers to return (default: 50)
      *
      * @throws {ZaloApiError}
      */
-    return async function getSearchSticker(keyword: string, limit: number = 50) {
+    return async function searchSticker(keyword: string, limit: number = 50) {
         const params = {
             keyword: keyword,
             limit: limit,

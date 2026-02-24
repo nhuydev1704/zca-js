@@ -1,20 +1,9 @@
 import { ZaloApiError } from "../Errors/ZaloApiError.js";
-import type { Gender, ZBusinessPackage } from "../models/index.js";
 import { apiFactory } from "../utils.js";
 
-export type FindUserByUsernameResponse = {
-    avatar: string;
-    cover: string;
-    status: string;
-    gender: Gender;
-    dob: number;
-    sdob: string;
-    globalId: string;
-    bizPkg: ZBusinessPackage;
-    uid: string;
-    zalo_name: string;
-    display_name: string;
-};
+import { AvatarSize, type UserBasic } from "../models/index.js";
+
+export type FindUserByUsernameResponse = UserBasic;
 
 export const findUserByUsernameFactory = apiFactory<FindUserByUsernameResponse>()((api, _ctx, utils) => {
     const serviceURL = utils.makeURL(`${api.zpwServiceMap.friend[0]}/api/friend/search/by-user-name`);
@@ -23,14 +12,14 @@ export const findUserByUsernameFactory = apiFactory<FindUserByUsernameResponse>(
      * Find user by username
      *
      * @param username username for find
-     * @param isAvatarSizeMax Is avatar size max (default: true)
+     * @param avatarSize Avatar size (default: AvatarSize.Large)
      *
      * @throws {ZaloApiError}
      */
-    return async function findUserByUsername(username: string, isAvatarSizeMax: boolean = true) {
+    return async function findUserByUsername(username: string, avatarSize: AvatarSize = AvatarSize.Large) {
         const params = {
             user_name: username,
-            avatar_size: isAvatarSizeMax ? 240 : 120,
+            avatar_size: avatarSize,
         };
 
         const encryptedParams = utils.encodeAES(JSON.stringify(params));
